@@ -9,6 +9,12 @@
         <class>com.medconnect.medconnect.model.Nurse</class>
         <class>com.medconnect.medconnect.model.Generalist</class>
         <class>com.medconnect.medconnect.model.Specialist</class>
+        <class>com.medconnect.medconnect.model.Patient</class>
+        <class>com.medconnect.medconnect.model.MedicalRecord</class>
+        <class>com.medconnect.medconnect.model.VitalSigns</class>
+        <class>com.medconnect.medconnect.model.Consultation</class>
+        <class>com.medconnect.medconnect.model.TimeSlot</class>
+        <class>com.medconnect.medconnect.model.ExpertiseRequest</class>
 
         <properties>
             <!-- Database connection -->
