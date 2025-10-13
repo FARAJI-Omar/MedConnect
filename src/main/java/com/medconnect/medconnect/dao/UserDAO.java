@@ -1,17 +1,13 @@
 package com.medconnect.medconnect.dao;
 
 import com.medconnect.medconnect.model.User;
+import com.medconnect.medconnect.util.DatabaseManager;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
 public class UserDAO {
 
-    private static final EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("default");
-
     public void save(User user) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = DatabaseManager.getEntityManager();
 
         try {
             em.getTransaction().begin();

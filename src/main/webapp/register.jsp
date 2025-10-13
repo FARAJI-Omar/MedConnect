@@ -56,6 +56,16 @@
             margin-bottom: 1.5rem;
         }
 
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
         .form-group {
             margin-bottom: 1rem;
         }
@@ -123,26 +133,42 @@
     <main class="main-content">
         <div class="login-container">
             <h1 class="login-title">Create Account</h1>
+
+            <!-- error message -->
+            <% String error = (String) request.getAttribute("error"); %>
+            <% if (error != null) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
             <form method="post" action="register">
                 <div class="form-group">
                     <label for="name" class="form-label">Full Name</label>
-                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name" required>
+                    <input type="text" id="name" name="name" class="form-input"
+                           placeholder="Enter your full name"
+                           value="<%= request.getParameter("name") != null ? request.getParameter("name") : "" %>"
+                           required>
                 </div>
                 <div class="form-group">
                     <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                    <input type="email" id="email" name="email" class="form-input"
+                           placeholder="Enter your email"
+                           value="<%= request.getParameter("email") != null ? request.getParameter("email") : "" %>"
+                           required>
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+                    <input type="password" id="password" name="password" class="form-input"
+                           placeholder="Enter your password (min. 6 characters)" required>
                 </div>
                 <div class="form-group">
                     <label for="role" class="form-label">Role</label>
                     <select id="role" name="role" class="form-select" required>
                         <option value="">Select your role</option>
-                        <option value="Generalist">Generalist</option>
-                        <option value="Specialist">Specialist</option>
-                        <option value="Nurse">Nurse</option>
+                        <option value="Generalist" <%= "Generalist".equals(request.getParameter("role")) ? "selected" : "" %>>Generalist</option>
+                        <option value="Specialist" <%= "Specialist".equals(request.getParameter("role")) ? "selected" : "" %>>Specialist</option>
+                        <option value="Nurse" <%= "Nurse".equals(request.getParameter("role")) ? "selected" : "" %>>Nurse</option>
                     </select>
                 </div>
                 <button type="submit" class="register-button">Create Account</button>
