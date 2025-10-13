@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet {
 
         request.setAttribute("email", email);
         request.setAttribute("password", password);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("info.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
         dispatcher.forward(request, response);
     }
 }
