@@ -20,9 +20,6 @@ public class MedicalRecord {
     private String allergies;
     private String ongoingTreatments;
 
-    @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<VitalSigns> vitalSigns = new ArrayList<>();
-
     // Default constructor
     public MedicalRecord() {}
 
@@ -53,10 +50,6 @@ public class MedicalRecord {
     public String getOngoingTreatments() {
         return ongoingTreatments;
     }
-    
-    public List<VitalSigns> getVitalSigns() {
-        return vitalSigns;
-    }
 
     // Setters
     public void setCardNumber(int id) {
@@ -77,20 +70,5 @@ public class MedicalRecord {
 
     public void setOngoingTreatments(String ongoingTreatments) {
         this.ongoingTreatments = ongoingTreatments;
-    }
-    
-    public void setVitalSigns(List<VitalSigns> vitalSigns) {
-        this.vitalSigns = vitalSigns;
-    }
-
-    // Convenience methods for managing VitalSigns relationship
-    public void addVitalSigns(VitalSigns vitalSign) {
-        vitalSigns.add(vitalSign);
-        vitalSign.setMedicalRecord(this);
-    }
-
-    public void removeVitalSigns(VitalSigns vitalSign) {
-        vitalSigns.remove(vitalSign);
-        vitalSign.setMedicalRecord(null);
     }
 }

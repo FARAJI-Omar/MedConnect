@@ -18,14 +18,14 @@ public class VitalSigns {
     private double height;
     private double weight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medical_record_id", referencedColumnName = "id")
-    private MedicalRecord medicalRecord;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", referencedColumnName = "cardId")
+    private Patient patient;
 
     // Default constructor
     public VitalSigns() {}
 
-    public VitalSigns(int id, LocalDateTime entryDate, double temperature, double heartRate, double respiratoryRate, double height, double weight, MedicalRecord medicalRecord) {
+    public VitalSigns(int id, LocalDateTime entryDate, double temperature, double heartRate, double respiratoryRate, double height, double weight, Patient patient) {
         this.id = id;
         this.entryDate = entryDate;
         this.temperature = temperature;
@@ -33,7 +33,7 @@ public class VitalSigns {
         this.respiratoryRate = respiratoryRate;
         this.height = height;
         this.weight = weight;
-        this.medicalRecord = medicalRecord;
+        this.patient = patient;
     }
 
     // Getters
@@ -44,7 +44,7 @@ public class VitalSigns {
     public double getRespiratoryRate() { return respiratoryRate; }
     public double getHeight() { return height; }
     public double getWeight() { return weight; }
-    public MedicalRecord getMedicalRecord() { return medicalRecord;}
+    public Patient getPatient() { return patient;}
 
     // Setters
     public void setEntryDate(LocalDateTime entryDate) { this.entryDate = entryDate; }
@@ -53,5 +53,5 @@ public class VitalSigns {
     public void setRespiratoryRate(double respiratoryRate) { this.respiratoryRate = respiratoryRate; }
     public void setHeight(double height) { this.height = height; }
     public void setWeight(double weight) { this.weight = weight; }
-    public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
+    public void setPatient(Patient patient) { this.patient = patient; }
 }

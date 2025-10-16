@@ -1,8 +1,10 @@
 package com.medconnect.medconnect.model;
 
+import com.medconnect.medconnect.model.enums.Sexe;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,20 +21,27 @@ public class Patient {
     @Column(name = "security_number")
     private String secuNumber;
 
+    @Enumerated(EnumType.STRING)
+    private Sexe sexe;
+
     private String address;
     private String phone;
     private String insurance;
+    private LocalTime queueTime;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MedicalRecord> medicalRecords = new ArrayList<>();
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Consultation> consultations = new ArrayList<>();
 
+    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private VitalSigns vitalSigns;
+
     //default constructor
     public Patient() {}
 
-    public  Patient(String cardId, String name, LocalDateTime birthDate, String secuNumber, String address, String phone, String insurance) {
+    public  Patient(String cardId, String name, LocalDateTime birthDate, String secuNumber, String address, String phone, String insurance, Sexe sexe) {
         this.cardId = cardId;
         this.name = name;
         this.birthDate = birthDate;
@@ -40,6 +49,7 @@ public class Patient {
         this.address = address;
         this.phone = phone;
         this.insurance = insurance;
+        this.sexe = sexe;
     }
 
     //getters
@@ -61,9 +71,9 @@ public class Patient {
     public String getPhone() {
         return phone;
     }
-    public String getInsurance() {
-        return insurance;
-    }
+    public String getInsurance() { return insurance;}
+    public Sexe getSexe() { return sexe; }
+    public LocalTime getQueueTime() { return queueTime; }
 
     public List<MedicalRecord> getMedicalRecords() {
         return medicalRecords;
@@ -71,6 +81,10 @@ public class Patient {
 
     public List<Consultation> getConsultations() {
         return consultations;
+    }
+
+    public VitalSigns getVitalSigns() {
+        return vitalSigns;
     }
 
     //setters
@@ -95,6 +109,8 @@ public class Patient {
     public void setInsurance(String insurance) {
         this.insurance = insurance;
     }
+    public void setSexe(Sexe sexe) { this.sexe = sexe;}
+    public void setQueueTime(LocalTime queueTime) { this.queueTime = queueTime; }
 
     public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
         this.medicalRecords = medicalRecords;
@@ -102,6 +118,10 @@ public class Patient {
 
     public void setConsultations(List<Consultation> consultations) {
         this.consultations = consultations;
+    }
+
+    public void setVitalSigns(VitalSigns vitalSigns) {
+        this.vitalSigns = vitalSigns;
     }
 
     // Convenience methods for managing the relationship
