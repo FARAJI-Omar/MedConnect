@@ -1,8 +1,8 @@
-package com.medconnect.medconnect.servlet;
+package com.medconnect.medconnect.controller;
 
-import com.medconnect.medconnect.dao.UserDAO;
 import com.medconnect.medconnect.model.enums.Role;
 import com.medconnect.medconnect.service.UserService;
+import com.medconnect.medconnect.util.PasswordUtil;
 import com.medconnect.medconnect.util.ValidatorUtil;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -15,14 +15,22 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    private final UserService userService = new UserService();
+    private UserService userService;
 
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.userService = new UserService();
+    }
+
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
         dispatcher.forward(request, response);
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // get data from form
         String name = request.getParameter("name");
@@ -82,7 +90,11 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            userService.register(name.trim(), email.trim(), password, userRole);
+            //hash password
+            String hashedPassword = PasswordUtil.hashPassword(password);
+
+            // Register user
+            userService.register(name.trim(), email.trim(), hashedPassword, userRole);
             response.sendRedirect("login");
 
         } catch (IllegalArgumentException e) {

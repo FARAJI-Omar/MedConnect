@@ -114,6 +114,17 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+
+        /* Error message styling */
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -122,6 +133,14 @@
     <main class="main-content">
         <div class="login-container">
             <h1 class="login-title">Sign In</h1>
+
+            <% String error = (String) request.getAttribute("error"); %>
+            <% if (error != null) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
             <form action="login" method="post">
                 <div class="form-group">
                     <label for="email" class="form-label">Email Address</label>
