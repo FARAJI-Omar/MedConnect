@@ -1,5 +1,8 @@
 package com.medconnect.medconnect.util;
 
+import com.medconnect.medconnect.model.enums.Role;
+import com.medconnect.medconnect.model.enums.Sexe;
+
 public class ValidatorUtil {
     // email validation regex
     public static boolean isValidEmail(String email) {
@@ -21,7 +24,20 @@ public class ValidatorUtil {
 
     // validate role
     public static boolean isValidRole(String role) {
-        return role != null && (role.equals("NURSE") || role.equals("GENERALIST") || role.equals("SPECIALIST"));
+        for (Role r : Role.values()) {
+            if (r.name().equals(role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    public static boolean isValidSexe(String sexe) {
+        for (Sexe s : Sexe.values()) {
+            if (s.name().equals(sexe)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
