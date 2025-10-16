@@ -1,4 +1,4 @@
-package com.medconnect.medconnect.servlet;
+package com.medconnect.medconnect.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -12,8 +12,7 @@ import java.io.IOException;
 @WebServlet("/home")
 public class IndexServlet extends HttpServlet {
 
-    public void  doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void  doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
