@@ -29,8 +29,8 @@ public class Patient {
     private String insurance;
     private LocalTime queueTime;
 
-        @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<MedicalRecord> medicalRecords = new ArrayList<>();
+    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private MedicalRecord medicalRecord;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Consultation> consultations = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Patient {
     public String getName() {
         return name;
     }
-    public  LocalDateTime getBirthDate() {
+    public LocalDateTime getBirthDate() {
         return birthDate;
     }
     public String getSecuNumber() {
@@ -75,8 +75,8 @@ public class Patient {
     public Sexe getSexe() { return sexe; }
     public LocalTime getQueueTime() { return queueTime; }
 
-    public List<MedicalRecord> getMedicalRecords() {
-        return medicalRecords;
+    public MedicalRecord getMedicalRecord() {
+        return medicalRecord;
     }
 
     public List<Consultation> getConsultations() {
@@ -112,8 +112,8 @@ public class Patient {
     public void setSexe(Sexe sexe) { this.sexe = sexe;}
     public void setQueueTime(LocalTime queueTime) { this.queueTime = queueTime; }
 
-    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
-        this.medicalRecords = medicalRecords;
+    public void setMedicalRecords(MedicalRecord medicalRecord) {
+        this.medicalRecord = medicalRecord;
     }
 
     public void setConsultations(List<Consultation> consultations) {
@@ -126,13 +126,17 @@ public class Patient {
 
     // Convenience methods for managing the relationship
     public void addMedicalRecord(MedicalRecord medicalRecord) {
-        medicalRecords.add(medicalRecord);
-        medicalRecord.setPatient(this);
+        this.medicalRecord = medicalRecord;
+        if (medicalRecord != null) {
+            medicalRecord.setPatient(this);
+        }
     }
 
-    public void removeMedicalRecord(MedicalRecord medicalRecord) {
-        medicalRecords.remove(medicalRecord);
-        medicalRecord.setPatient(null);
+    public void removeMedicalRecord() {
+        if (this.medicalRecord != null) {
+            this.medicalRecord.setPatient(null);
+            this.medicalRecord = null;
+        }
     }
 
     // Convenience methods for managing consultations
