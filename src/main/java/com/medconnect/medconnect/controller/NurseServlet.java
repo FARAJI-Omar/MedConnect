@@ -139,4 +139,10 @@ public class NurseServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("nurseDashboard.jsp");
         dispatcher.forward(request, response);
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.patientService = null;
+    }
 }

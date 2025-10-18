@@ -19,9 +19,6 @@ public class LoginServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         this.userService = new UserService();
-
-        // Log initialization for debugging
-        getServletContext().log("LoginServlet initialized successfully");
     }
 
     @Override
@@ -61,5 +58,11 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("error", "Invalid email or password");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.userService = null;
     }
 }

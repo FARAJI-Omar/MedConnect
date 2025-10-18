@@ -111,4 +111,10 @@ public class RegisterServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
         dispatcher.forward(request, response);
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.userService = null;
+    }
 }

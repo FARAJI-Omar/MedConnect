@@ -66,4 +66,10 @@ public class NurseQueueServlet extends HttpServlet {
 
         response.sendRedirect(request.getContextPath() + "/nurse");
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.patientService = null;
+    }
 }

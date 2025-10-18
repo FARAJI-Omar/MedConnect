@@ -26,4 +26,10 @@ public class LogoutServlet extends HttpServlet {
 
         response.sendRedirect("home");
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.userService = null;
+    }
 }
