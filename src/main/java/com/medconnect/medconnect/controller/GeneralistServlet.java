@@ -1,8 +1,10 @@
 package com.medconnect.medconnect.controller;
 
+import com.medconnect.medconnect.model.Consultation;
 import com.medconnect.medconnect.model.MedicalRecord;
 import com.medconnect.medconnect.model.Patient;
 import com.medconnect.medconnect.model.enums.Role;
+import com.medconnect.medconnect.service.ConsultationService;
 import com.medconnect.medconnect.service.MedicalRecordService;
 import com.medconnect.medconnect.service.PatientService;
 import com.medconnect.medconnect.util.SessionUtil;
@@ -14,46 +16,50 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @WebServlet("/generalist")
 public class GeneralistServlet extends HttpServlet {
     private PatientService patientService;
     private MedicalRecordService medicalRecordService;
+    private ConsultationService consultationService;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        // Initialize services in init method
         this.patientService = new PatientService();
         this.medicalRecordService = new MedicalRecordService();
+        this.consultationService = new ConsultationService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //session check
+        // Session check
         if (!SessionUtil.isAuthorized(request, Role.GENERALIST)) {
             response.sendRedirect("home");
             return;
         }
 
-        // Fetch all patients using service
+        // Fetch all patients
         List<Patient> patients = patientService.getAllPatients();
+        request.setAttribute("patients", patients);
 
-        // Fetch medical records for each patient using service
-        Map<String, MedicalRecord> patientMedicalRecords = null;
-        if (patients != null && !patients.isEmpty()) {
-            List<String> patientCardIds = patients.stream()
-                    .map(Patient::getCardId)
-                    .collect(Collectors.toList());
+        // Check if a specific patient is selected
+        String selectedPatientId = request.getParameter("patientId");
+        if (selectedPatientId != null && !selectedPatientId.isEmpty()) {
+            // Load selected patient data
+            Patient selectedPatient = patientService.getPatientByCardId(selectedPatientId);
+            if (selectedPatient != null) {
+                request.setAttribute("selectedPatient", selectedPatient);
 
-            patientMedicalRecords = medicalRecordService.getMedicalRecordsMapByCardIds(patientCardIds);
+                // Load medical record for selected patient
+                MedicalRecord medicalRecord = medicalRecordService.getMedicalRecordByPatientCardId(selectedPatientId);
+                request.setAttribute("medicalRecord", medicalRecord);
+            }
         }
 
-        // Set attributes for JSP
-        request.setAttribute("patients", patients);
-        request.setAttribute("patientMedicalRecords", patientMedicalRecords);
+        // fetch consultations
+        List<Consultation> consultations = consultationService.getAllConsultations();
+        request.setAttribute("consultations", consultations);
 
         request.getRequestDispatcher("generalistDashboard.jsp").forward(request, response);
     }
@@ -61,7 +67,6 @@ public class GeneralistServlet extends HttpServlet {
     @Override
     public void destroy() {
         super.destroy();
-        // Clean up resources if needed
         this.patientService = null;
         this.medicalRecordService = null;
     }
