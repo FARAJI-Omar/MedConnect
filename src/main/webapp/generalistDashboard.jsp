@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.medconnect.medconnect.util.DateUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -455,12 +456,30 @@
                     <span class="material-symbols-outlined">settings</span>
                     <span>Settings</span>
                 </a>
+                <a class="nav-item" href="${pageContext.request.contextPath}/logout">
+                    <?xml version="1.0"?><svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 16L21 12M21 12L17 8M21 12L7 12M13 16V17C13 18.6569 11.6569 20 10 20H6C4.34315 20 3 18.6569 3 17V7C3 5.34315 4.34315 4 6 4H10C11.6569 4 13 5.34315 13 7V8" stroke="#374151" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+                    <span class="nav-text">Logout</span>
+                </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <div class="content-container">
+                <!-- Success/Error Messages -->
+                <c:if test="${param.success == 'consultation_saved'}">
+                    <div style="background-color: #d4edda; color: #155724; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                        ✓ Consultation saved successfully!
+                    </div>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div style="background-color: #f8d7da; color: #721c24; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                        ✗ ${error}
+                    </div>
+                </c:if>
+
                 <!-- Page Header with Patient Selector -->
                 <div class="page-header">
                     <h1 class="page-title">Patient Consultations</h1>
@@ -469,14 +488,17 @@
                     <div class="patient-selector-container">
                         <label class="patient-selector-label" for="patient-select">Select Patient:</label>
                         <div class="patient-selector">
-                            <select id="patient-select" class="form-select">
-                                <option value="">Select a patient...</option>
-                                <c:forEach var="patient" items="${patients}">
-                                    <option value="${patient.cardId}">
-                                        ${patient.name} (${patient.cardId})
-                                    </option>
-                                </c:forEach>
-                            </select>
+                            <form action="generalist" method="get" id="patient-form">
+                                <select id="patient-select" name="patientId" class="form-select" onchange="this.form.submit()">
+                                    <option value="">Select a patient...</option>
+                                    <c:forEach var="patient" items="${patients}">
+                                        <option value="${patient.cardId}"
+                                            ${selectedPatient != null && selectedPatient.cardId == patient.cardId ? 'selected' : ''}>
+                                            ${patient.name} (${patient.cardId})
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -502,41 +524,49 @@
                         </div>
 
                         <form id="patientForm" action="${pageContext.request.contextPath}/medicalrecord" method="post">
-                            <input type="hidden" id="form-card-id" name="cardId" value=""/>
+                            <input type="hidden" id="form-card-id" name="cardId" value="${selectedPatient != null ? selectedPatient.cardId : ''}"/>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label" for="patient-name">Patient Name</label>
-                                    <input class="form-input always-readonly" id="patient-name" type="text" value="" readonly/>
+                                    <input class="form-input always-readonly" id="patient-name" type="text"
+                                           value="${selectedPatient != null ? selectedPatient.name : ''}" readonly/>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label" for="card-id">Card ID</label>
-                                    <input class="form-input always-readonly" id="card-id" type="text" value="" readonly/>
+                                    <input class="form-input always-readonly" id="card-id" type="text"
+                                           value="${selectedPatient != null ? selectedPatient.cardId : ''}" readonly/>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label" for="dob">Date of Birth</label>
-                                    <input class="form-input always-readonly" id="dob" type="text" value="" readonly/>
+                                    <input class="form-input always-readonly" id="dob" type="text"
+                                           value="${selectedPatient != null ? selectedPatient.birthDate : ''}" readonly/>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label" for="gender">Gender</label>
-                                    <input class="form-input always-readonly" id="gender" type="text" value="" readonly/>
+                                    <input class="form-input always-readonly" id="gender" type="text"
+                                           value="${selectedPatient != null ? selectedPatient.sexe : ''}" readonly/>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="allergies">Allergies</label>
-                                    <input class="form-input" id="allergies" name="allergies" type="text" value="" placeholder="No allergies recorded" readonly/>
+                                    <input class="form-input" id="allergies" name="allergies" type="text"
+                                           value="${medicalRecord != null ? medicalRecord.allergies : ''}"
+                                           placeholder="No allergies recorded" readonly/>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="medical-history">Medical History</label>
-                                    <textarea class="form-textarea" id="medical-history" name="medicalHistory" rows="4" placeholder="No medical history recorded" readonly></textarea>
+                                    <textarea class="form-textarea" id="medical-history" name="medicalHistory" rows="4"
+                                              placeholder="No medical history recorded" readonly>${medicalRecord != null ? medicalRecord.medicalHistory : ''}</textarea>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="ongoing-treatments">Ongoing Treatments</label>
-                                    <textarea class="form-textarea" id="ongoing-treatments" name="ongoingTreatments" rows="4" placeholder="No ongoing treatments" readonly></textarea>
+                                    <textarea class="form-textarea" id="ongoing-treatments" name="ongoingTreatments" rows="4"
+                                              placeholder="No ongoing treatments" readonly>${medicalRecord != null ? medicalRecord.ongoingTreatments : ''}</textarea>
                                 </div>
                             </div>
 
@@ -553,31 +583,32 @@
                     <div class="card">
                         <h2 class="card-title">Consultation Details</h2>
 
-                        <form id="consultationForm">
+                        <form id="consultationForm" action="${pageContext.request.contextPath}/consultation" method="post">
+                            <input type="hidden" name="patientCardId" id="consultation-patient-id" value="${selectedPatient != null ? selectedPatient.cardId : ''}"/>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label" for="cost">Cost (DH)</label>
-                                    <input class="form-input editable" id="cost" type="number" step="0.01" placeholder="0.00"/>
+                                    <input class="form-input editable" id="cost" name="cost" type="number" step="0.01" placeholder="0.00"/>
                                 </div>
 
                                 <div class="form-group full-width">
-                                    <label class="form-label" for="diagnosis">Diagnosis</label>
-                                    <textarea class="form-textarea editable" id="diagnosis" rows="4" placeholder="Enter diagnosis"></textarea>
+                                    <label class="form-label" for="diagnosis">Diagnosis <span style="color: red;">*</span></label>
+                                    <textarea class="form-textarea editable" id="diagnosis" name="diagnosis" rows="4" placeholder="Enter diagnosis" required></textarea>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="motif">Motif</label>
-                                    <input class="form-input editable" id="motif" type="text" placeholder="Enter reason for visit"/>
+                                    <input class="form-input editable" id="motif" name="motif" type="text" placeholder="Enter reason for visit"/>
                                 </div>
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="observations">Observations</label>
-                                    <textarea class="form-textarea editable" id="observations" rows="4" placeholder="Enter your observations"></textarea>
+                                    <textarea class="form-textarea editable" id="observations" name="observations" rows="4" placeholder="Enter your observations"></textarea>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label" for="status">Status</label>
-                                    <select class="form-select editable" id="status">
+                                    <label class="form-label" for="status">Status <span style="color: red;">*</span></label>
+                                    <select class="form-select editable" id="status" name="status" required>
                                         <option value="">Select Status</option>
                                         <option value="COMPLETED">COMPLETED</option>
                                         <option value="DONE">DONE</option>
@@ -587,13 +618,14 @@
 
                                 <div class="form-group full-width">
                                     <label class="form-label" for="treatment">Treatment</label>
-                                    <textarea class="form-textarea editable" id="treatment" rows="4" placeholder="e.g., Paracetamol 1g, 3 times/day"></textarea>
+                                    <textarea class="form-textarea editable" id="treatment" name="treatment" rows="4" placeholder="e.g., Paracetamol 1g, 3 times/day"></textarea>
                                 </div>
                             </div>
 
                             <div class="form-actions">
-                                <button class="btn btn-primary" type="button" onclick="saveConsultation()">
-                                    Save Consultation
+                                <button class="btn btn-primary" type="submit">
+                                    <span class="material-symbols-outlined">save</span>
+                                    <span>Save Consultation</span>
                                 </button>
                             </div>
                         </form>
@@ -608,12 +640,20 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label" for="te-patient-name">Patient Name</label>
-                                <input class="form-input" id="te-patient-name" type="text" value="John Doe" readonly/>
+                                <input class="form-input" id="te-patient-name" type="text"
+                                       value="${selectedPatient != null ? selectedPatient.name : ''}" readonly/>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="te-card-id">Card ID</label>
+                                <input class="form-input" id="te-card-id" type="text"
+                                       value="${selectedPatient != null ? selectedPatient.cardId : ''}" readonly/>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="te-dob">Date of Birth</label>
-                                <input class="form-input" id="te-dob" type="date" value="1985-05-23" readonly/>
+                                <input class="form-input" id="te-dob" type="text"
+                                       value="${selectedPatient != null ? selectedPatient.birthDate : ''}" readonly/>
                             </div>
                         </div>
                     </div>
@@ -631,7 +671,7 @@
                                             <option value="">Select a consultation...</option>
                                             <c:forEach var="consultation" items="${consultations}">
                                                 <option value="${consultation.id}">
-                                                    ${consultation.consultationDate} - ${consultation.patient.name} (${consultation.patient.cardId})
+                                                    ${fn:substring(consultation.consultationDate, 0, 16)} - ${consultation.patient.name} (${consultation.patient.cardId})
                                                 </option>
                                             </c:forEach>
                                         </select>
@@ -763,6 +803,13 @@
             const editButton = document.querySelector('button[onclick="toggleEdit()"]');
             const editButtonText = editButton.querySelector('span:not(.material-symbols-outlined)');
 
+            // Check if a patient is selected
+            const cardId = document.getElementById('form-card-id').value;
+            if (!cardId) {
+                alert('Please select a patient first');
+                return;
+            }
+
             // Only select inputs that are NOT always-readonly
             const inputs = form.querySelectorAll('.form-input:not(.always-readonly), .form-textarea');
             const submitButton = document.getElementById('patientFormActions');
@@ -794,34 +841,7 @@
             }
         }
 
-        // Save Consultation (Direct Care)
-        function saveConsultation() {
-            const consultationData = {
-                cost: document.getElementById('cost').value,
-                diagnosis: document.getElementById('diagnosis').value,
-                motif: document.getElementById('motif').value,
-                observations: document.getElementById('observations').value,
-                status: document.getElementById('status').value,
-                treatment: document.getElementById('treatment').value
-            };
-
-            // Validate required fields
-            if (!consultationData.diagnosis || !consultationData.status) {
-                alert('Please fill in all required fields (Diagnosis, Status)');
-                return;
-            }
-
-            console.log('Consultation Data:', consultationData);
-            alert('Consultation saved successfully!');
-
-            // Here you would typically send the data to the server
-            // fetch('/medconnect/saveConsultation', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(consultationData)
-            // }).then(response => response.json())
-            //   .then(data => console.log(data));
-        }
+        // Form submission is now handled by the form action - no JavaScript needed
 
         // Send Request (Tele-Expertise)
         function sendRequest() {
@@ -850,14 +870,6 @@
 
             console.log('Tele-Expertise Request:', requestData);
             alert('Request sent successfully!');
-
-            // Here you would typically send the data to the server
-            // fetch('/medconnect/sendTeleExpertiseRequest', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(requestData)
-            // }).then(response => response.json())
-            //   .then(data => console.log(data));
         }
 
         // Cancel Request
@@ -870,76 +882,6 @@
                     slot.classList.remove('selected');
                 });
             }
-        }
-
-        // Patient data storage (this would typically come from the server)
-        const patientData = {
-            <c:forEach var="patient" items="${patients}" varStatus="status">
-            <c:set var="medRecord" value="${patientMedicalRecords[patient.cardId]}" />
-            "${patient.cardId}": {
-                name: "${patient.name}",
-                cardId: "${patient.cardId}",
-                birthDate: "<fmt:formatDate value='${patient.birthDate}' pattern='dd/MM/yyyy' />",
-                birthDateISO: "<fmt:formatDate value='${patient.birthDate}' pattern='yyyy-MM-dd' />",
-                gender: "${not empty patient.sexe ? patient.sexe : ''}",
-                allergies: "${not empty medRecord.allergies ? medRecord.allergies : ''}",
-                medicalHistory: "${not empty medRecord.medicalHistory ? medRecord.medicalHistory : ''}",
-                ongoingTreatments: "${not empty medRecord.ongoingTreatments ? medRecord.ongoingTreatments : ''}"
-            }<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        };
-
-        // Patient Selection Handler
-        document.addEventListener('DOMContentLoaded', function() {
-            const patientSelect = document.getElementById('patient-select');
-
-            if (patientSelect) {
-                patientSelect.addEventListener('change', function() {
-                    const patientId = this.value;
-
-                    if (patientId && patientData[patientId]) {
-                        updatePatientRecord(patientData[patientId]);
-                    } else {
-                        clearPatientRecord();
-                    }
-                });
-            }
-        });
-
-        // Update Patient Medical Record
-        function updatePatientRecord(patient) {
-            // Update Direct Care tab fields
-            document.getElementById('patient-name').value = patient.name || '';
-            document.getElementById('card-id').value = patient.cardId || '';
-            document.getElementById('dob').value = patient.birthDate || '';
-            document.getElementById('gender').value = patient.gender || '';
-            document.getElementById('allergies').value = patient.allergies || '';
-            document.getElementById('medical-history').value = patient.medicalHistory || '';
-            document.getElementById('ongoing-treatments').value = patient.ongoingTreatments || '';
-
-            // Update hidden field for form submission
-            document.getElementById('form-card-id').value = patient.cardId || '';
-
-            // Update Tele-Expertise tab fields
-            document.getElementById('te-patient-name').value = patient.name || '';
-            document.getElementById('te-dob').value = patient.birthDate || '';
-        }
-
-        // Clear Patient Medical Record
-        function clearPatientRecord() {
-            // Clear Direct Care tab fields
-            document.getElementById('patient-name').value = '';
-            document.getElementById('form-card-id').value = ''; // Clear hidden field
-            document.getElementById('card-id').value = '';
-            document.getElementById('dob').value = '';
-            document.getElementById('gender').value = '';
-            document.getElementById('allergies').value = '';
-            document.getElementById('medical-history').value = '';
-            document.getElementById('ongoing-treatments').value = '';
-
-            // Clear Tele-Expertise tab fields
-            document.getElementById('te-patient-name').value = '';
-            document.getElementById('te-dob').value = '';
         }
     </script>
 </body>
