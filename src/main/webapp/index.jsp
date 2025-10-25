@@ -14,9 +14,25 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f6f7f8;
+            background: linear-gradient(-45deg, #f6f7f8, #e8f4f8, #f0f9ff, #f6f7f8);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             color: #334155;
             line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .container {
@@ -29,6 +45,101 @@
             display: flex;
             min-height: 100vh;
             flex-direction: column;
+            position: relative;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1193d4, #0ea5e9);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .shape-2 {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            top: 60%;
+            left: 80%;
+            animation-delay: 3s;
+            animation-duration: 20s;
+        }
+
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #1193d4, #0284c7);
+            top: 80%;
+            left: 20%;
+            animation-delay: 6s;
+            animation-duration: 30s;
+        }
+
+        .shape-4 {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #38bdf8, #1193d4);
+            top: 30%;
+            left: 70%;
+            animation-delay: 9s;
+            animation-duration: 22s;
+        }
+
+        .shape-5 {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0ea5e9, #1193d4);
+            top: 50%;
+            left: 5%;
+            animation-delay: 12s;
+            animation-duration: 28s;
+        }
+
+        .shape-6 {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            top: 15%;
+            left: 85%;
+            animation-delay: 15s;
+            animation-duration: 26s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            75% {
+                transform: translate(20px, 30px) scale(1.05);
+            }
         }
 
         .main-content {
@@ -37,6 +148,8 @@
             align-items: center;
             justify-content: center;
             padding: 5rem 0;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-section {
@@ -102,6 +215,16 @@
 </head>
 <body>
 <div class="page-wrapper">
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <div class="floating-shape shape-5"></div>
+        <div class="floating-shape shape-6"></div>
+    </div>
+
     <jsp:include page="header.jsp" />
     <main class="main-content">
         <div class="container">
