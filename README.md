@@ -1,6 +1,6 @@
 # MedConnect
 
-MedConnect is a simple web app that helps medical teams collaborate.
+MedConnect is a **Jakarta EE (JEE)** web application that helps medical teams collaborate.
 It supports role-based workflows for **Nurses**, **Generalists**, and **Specialists** to improve patient follow-up and remote consultation.
 
 ## What this project does
@@ -13,11 +13,11 @@ It supports role-based workflows for **Nurses**, **Generalists**, and **Speciali
 
 ## Tech stack
 
+- **Jakarta EE 10** (Servlets 6, JSP, JSTL) — core application platform
 - Java 17
-- Jakarta Servlet + JSP (WAR project)
-- Hibernate / JPA
-- MySQL
-- Maven
+- Hibernate 7 / Jakarta JPA 3.2
+- MySQL 8
+- Maven (WAR packaging)
 
 ## Quick start
 
